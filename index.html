@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Poop On Fire</title>
+
+	<!-- Bootstrap V4 -->
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.3/css/bootstrap.min.css">
+	<!-- App Styles -->
+	<link rel="stylesheet" href="assets/css/style.css">
+	<!-- Google Fonts -->
+	<link href="https://fonts.googleapis.com/css?family=Pontano+Sans" rel="stylesheet">
+
+  </head>
+  <body>
+
+  	<div class="header">
+  		<h1><span class="light"><i class="fa fa-yelp" aria-hidden="true"></i> WELP!</span></h1>
+  		<h3>What seems to be your emergency?</h3>
+  		<div class="col-sm-6 offset-sm-3">
+            <input class="form-control controls text-center soft" id="" type="text" placeholder="Your Emergency"></input>
+            <button type="button" class="btn btn-block">SEARCH</button>
+        </div><!-- offset -->
+	</div><!-- header -->
+
+  	<div class="container">
+        <div class="row">
+          
+            <div class="col-md-6 col-sm-12 text-center"> 
+              <div class="icon-box">
+              	<a href="https://www.google.com/maps/search/roadside+assistance/@40.5349651,-74.5563723,13z/data=!3m1!4b1?hl=en" target="_blank">
+                  <h3>ROADSIDE<br/> ASSISTANCE </h3>
+                  <i class="fa fa-tachometer fa-3x" aria-hidden="true"></i>
+                 </a>
+              </div>
+            </div>
+        
+            <div class="col-md-6 col-sm-12 text-center"> 
+              <div class="icon-box">
+              	<a href="https://www.google.com/maps/search/gas+station/@40.5346907,-74.5509024,13z/data=!3m1!4b1!4m8!2m7!3m6!1sgas+station!2s300+Atrium+Dr,+Somerset,+NJ+08873!3s0x89c3c0bfb6415a39:0x852fb540071ea651!4m2!1d-74.5213351!2d40.5350066?hl=en" target="_blank">
+                  <h3>GAS STATION </h3>
+                  <i class="fa fa-exclamation-triangle fa-3x" aria-hidden="true"></i>
+              	</a>
+              </div>
+            </div>
+
+            <div class="col-md-6 col-sm-12 text-center"> 
+              <div class="icon-box">
+              	<a href="https://www.google.com/maps/dir//300+Atrium+Dr,+Somerset,+NJ+08873/@40.535434,-74.5234757,17z/data=!4m9!4m8!1m0!1m5!1m1!1s0x89c3c0be4adacfc5:0xb8de2b2495666e3b!2m2!1d-74.5213528!2d40.5350233!3e0?hl=en" target="_blank">
+                	<h3>DIRECTIONS </h3>
+                	<i class="fa fa-street-view fa-3x" aria-hidden="true"></i>
+                </a>
+              </div>
+            </div>
+
+            <div class="col-md-6 col-sm-12 text-center"> 
+              <div class="icon-box">
+              	<a href="https://www.google.com/maps/search/locksmith/@40.5349863,-74.5563723,13z/data=!3m1!4b1?hl=en" target="_blank">
+                	<h3>LOCKSMITH </h3>
+                	<i class="fa fa-key fa-3x" aria-hidden="true"></i>
+              	</a>
+              </div>
+            </div>
+
+            <div class="col-md-6 col-sm-12 text-center"> 
+              <div class="icon-box">
+              	<a href="https://www.google.com/maps/search/medical+care+hospitals/@40.5350074,-74.5563722,13z/data=!3m1!4b1?hl=en" target="_blank">
+                	<h3>MEDICAL CARE </h3>
+                	<i class="fa fa-hospital-o fa-3x" aria-hidden="true"></i>
+                </a>
+              </div>
+            </div>
+
+            <div class="col-md-6 col-sm-12 text-center"> 
+              <div class="icon-box">
+              	<a href="https://www.google.com/maps/search/police/@40.5349757,-74.5563723,13z/data=!3m1!4b1?hl=en" target="_blank">
+                	<h3>POLICE </h3>
+                	<i class="fa fa-taxi fa-3x" aria-hidden="true"></i>
+                </a>
+              </div>
+            </div>
+
+        </div><!-- row -->
+    </div><!-- container -->
+
+	<input id="pac-input" class="controls soft" type="text" placeholder="Search Box">
+    <div id="map" class="container col-md-6 col-sm-12 mapDiv"></div>
+
+    <footer class="footer">
+      <div class="container">
+        <span><i class="fa fa-copyright" aria-hidden="true"></i> 2018 Ruthie Campiz</span>
+      </div>
+    </footer>
+  
+  
+    <script>
+
+      function initAutocomplete() {
+        var map = new google.maps.Map(document.getElementById('map'), {
+          center: {lat: -33.8688, lng: 151.2195},
+          zoom: 13,
+          mapTypeId: 'roadmap'
+        });
+
+        // Create the search box and link it to the UI element.
+        var input = document.getElementById('pac-input');
+        var searchBox = new google.maps.places.SearchBox(input);
+        map.controls[google.maps.ControlPosition.TOP_LEFT].push(input);
+
+        // Bias the SearchBox results towards current map's viewport.
+        map.addListener('bounds_changed', function() {
+          searchBox.setBounds(map.getBounds());
+        });
+
+        var markers = [];
+        // Listen for the event fired when the user selects a prediction and retrieve
+        // more details for that place.
+        searchBox.addListener('places_changed', function() {
+          var places = searchBox.getPlaces();
+
+          if (places.length == 0) {
+            return;
+          }
+
+          // Clear out the old markers.
+          markers.forEach(function(marker) {
+            marker.setMap(null);
+          });
+          markers = [];
+
+          // For each place, get the icon, name and location.
+          var bounds = new google.maps.LatLngBounds();
+          places.forEach(function(place) {
+            if (!place.geometry) {
+              console.log("Returned place contains no geometry");
+              return;
+            }
+            var icon = {
+              url: place.icon,
+              size: new google.maps.Size(71, 71),
+              origin: new google.maps.Point(0, 0),
+              anchor: new google.maps.Point(17, 34),
+              scaledSize: new google.maps.Size(25, 25)
+            };
+
+            // Create a marker for each place.
+            markers.push(new google.maps.Marker({
+              map: map,
+              icon: icon,
+              title: place.name,
+              position: place.geometry.location
+            }));
+
+            if (place.geometry.viewport) {
+              // Only geocodes have viewport.
+              bounds.union(place.geometry.viewport);
+            } else {
+              bounds.extend(place.geometry.location);
+            }
+          });
+          map.fitBounds(bounds);
+        });
+      }
+
+    </script>
+
+    <!-- Script Sources -->
+    	<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAyesbQMyKVVbBgKVi2g6VX7mop2z96jBo&libraries=places&callback=initAutocomplete"
+         async defer></script>
+
+		<!-- Font Awesome -->
+		<script src="https://use.fontawesome.com/e33569b64c.js"></script>
+		<!--script src="assets/javascript/app.js"></script -->
+	<!-- End Scripts -->
+</body>
+</html>
